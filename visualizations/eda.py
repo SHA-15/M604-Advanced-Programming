@@ -215,3 +215,4 @@ class Subsistence(Dataset):
 
         print(f"Filtered data between {year_start} & {year_end}\n", filtered_df.head(15))
 
+

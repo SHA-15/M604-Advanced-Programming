@@ -98,3 +98,33 @@ sub_benefits.filter_data(year_start=2010, year_end=2022)
 subsistence = plots.Visuals()
 
 subsistence.line_progression_chart(data=sub_benefits.filtered_df, X="Year", y="Total", hue="Länder", title="Testing")
+
+sub_benefits.treefunctional(data=sub_benefits.filtered_df)
+
+def create_gauge_chart(df_filtered, gender, institution_type):
+    # Calculate totals
+    total_institution = df_filtered[f'{gender}_Institution'].sum()
+    total_not_institution = df_filtered[f'{gender}_Not_Institution'].sum()
+    
+    # Create gauge chart
+    fig = go.Figure(go.Indicator(
+        mode = "gauge+number",
+        value = total_institution if institution_type == 'Institution' else total_not_institution,
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        title = {'text': f"{gender} in {institution_type}"},
+        gauge = {
+            'axis': {'range': [None, max(total_institution, total_not_institution)]},
+            'steps': [
+                {'range': [0, max(total_institution, total_not_institution)], 'color': "lightblue"},
+            ],
+            'threshold': {
+                'line': {'color': "red", 'width': 4},
+                'thickness': 0.75,
+                'value': total_institution if institution_type == 'Institution' else total_not_institution
+            }
+        }
+    ))
+    
+    fig.update_layout(height=300, margin={'t':0, 'b':0, 'l':0, 'r':0})
+    
+    return fig

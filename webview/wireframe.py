@@ -140,13 +140,19 @@ class WebApp:
 
 
     def thirdataset(self, data: object):
-
+        
         with streamlit.container():
+            streamlit.subheader("Social Benefits: Subsistence Payment Recipients", divider="blue")
+            
+            
+            
             visual_filter = data[sub_benefits.filtered_df["Länder"].isin(self.region)]
 
             visual = subsistence.line_progression_chart(data=visual_filter, X="Year", y="Total", hue="Länder", title="Total Recipients of Subsistence Benefits By Bundesland")
 
             streamlit.plotly_chart(visual)
+
+
 
 
 

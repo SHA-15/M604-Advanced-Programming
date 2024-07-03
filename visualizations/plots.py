@@ -2,6 +2,7 @@ from urllib.request import urlopen
 from matplotlib import pyplot as plt
 import plotly.express as px
 import plotly.graph_objects as go
+import plotly.io as pio
 import seaborn as sns
 import pandas as pd
 import json
@@ -134,3 +135,6 @@ class Visuals:
             hovermode="closest"
         )
         return visual
+
+
+
