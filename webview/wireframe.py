@@ -1,6 +1,6 @@
 import streamlit
 import altair
-from visualizations import public_assist, pa, bsc, basics, melted_df, max_quarterly_value
+from visualizations import public_assist, pa, bsc, basics, melted_df, max_quarterly_value, sub_benefits, subsistence
 
 class WebApp:
 
@@ -17,6 +17,7 @@ class WebApp:
         self.establish_top_wireframe()
         self.middle_wireframe()
         self.second_dataset()
+        self.thirdataset(data=sub_benefits.filtered_df)
 
     def page_configuration(self, theme="dark"):
         streamlit.set_page_config(
@@ -37,6 +38,8 @@ class WebApp:
             self.filter_by: iter = streamlit.selectbox("Filter by Type of Social Benefit", self.filter_by_benefit)
             self.value_measure: iter = streamlit.selectbox("Filter by Exp, Rev, NetExp", self.values)
 
+
+            self.region: str = streamlit.multiselect("Select Bundesland", sub_benefits.filtered_df["Länder"].unique(), default=sub_benefits.filtered_df["Länder"].unique())
 
             streamlit.markdown("***")
             streamlit.markdown("This project is part of the M605A Advanced Programming Module in GISMA University of Applied Sciences")
@@ -136,7 +139,16 @@ class WebApp:
             streamlit.plotly_chart(grouped_bar)
 
 
-        
+    def thirdataset(self, data: object):
+
+        with streamlit.container():
+            visual_filter = data[sub_benefits.filtered_df["Länder"].isin(self.region)]
+
+            visual = subsistence.line_progression_chart(data=visual_filter, X="Year", y="Total", hue="Länder", title="Total Recipients of Subsistence Benefits By Bundesland")
+
+            streamlit.plotly_chart(visual)
+
+
 
 
                 

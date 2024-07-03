@@ -117,3 +117,20 @@ class Visuals:
 
         # visual.show()
         return visual
+
+    def line_progression_chart(self, data: pd.DataFrame, X: str, y: str, hue: str, title: str):
+
+        visual = px.line(data, x=X, y=y, color=hue, title=title)
+
+        visual.update_layout(
+            xaxis_title=X,
+            yaxis_title=y,
+            legend_title=hue,
+            plot_bgcolor="rgba(0,0,0,0)",
+            paper_bgcolor="rgba(0,0,0,0)",
+            margin={"l":0, "r":0, "t":40, "b":10},
+            height=800,
+            template="plotly_dark",
+            hovermode="closest"
+        )
+        return visual

@@ -65,8 +65,6 @@ class Dataset:
 
         print(f"\nGrouped DataFrame with sums: \n{grouped_data.head()}")
 
-
-
         return grouped_data
     
 
@@ -152,3 +150,68 @@ class BasicSecurity(Dataset):
         elongate_df = pd.melt(quarter_view, id_vars=[cols[0]], var_name=var_assignment, value_name=value_name)
 
         return elongate_df, max_value
+
+
+class Subsistence(Dataset):
+
+    def __init__(self, path_to_file, delimiter, skiprows, skipfooter):
+        super().__init__(path_to_file, delimiter, skiprows, skipfooter)
+
+    @Dataset.encoding_detection
+    def file_processing(self, encoding: str) -> pd.DataFrame:
+        with open(self.path_to_file, "r", encoding=encoding) as data_file:
+            file_contents = data_file.read()
+            print("\n", file_contents[:500])
+
+        df = pd.read_csv(self.path_to_file, encoding=encoding, delimiter=';', skiprows=self.skiprows, skipfooter=self.skipfooter, engine="python")
+
+        df.rename(
+            columns=
+            {
+            "Unnamed: 0": "Länder", 
+            "Unnamed: 1": "Year",
+            "Male": "Non-Institution German Males",
+            "Male.1": "Non-Institution Foreign Males",
+            "Male.2": "Total Non-Insitution Males",
+            "Male.3": "Institution German Males",
+            "Male.4": "Insitution Foreign Males",
+            "Male.5": "Total Institution Males",
+            "Male.6": "Total German Males",
+            "Male.7": "Total Foreign Males",
+            "Male.8": "Total Males",
+            "Female": "Non-Institution German Females",
+            "Female.1": "Non-Institution Foreign Females",
+            "Female.2": "Total Non-Insitution Females",
+            "Female.3": "Institution German Females",
+            "Female.4": "Insitution Foreign Females",
+            "Female.5": "Total Institution Females",
+            "Female.6": "Total German Females",
+            "Female.7": "Total Foreign Females",
+            "Female.8": "Total Females",
+            "Total": "Non-Institution Germans Total",
+            "Total.1": "Non-Institution Foreign Total",
+            "Total.2": "Non-Institution Total",
+            "Total.3": "Institution Germans Total",
+            "Total.4": "Institution Foreign Total",
+            "Total.5": "Institution Total",
+            "Total.6": "Germans Total",
+            "Total.7": "Foreign Total",
+            "Total.8": "Total",
+            "Date": "Year"}, 
+            inplace=True)
+        
+        df = df.iloc[1:]
+
+        df.Year = df["Year"].str[:4]
+
+        self.df = df
+        print("This is revised dataframe of the subsistence recipients\n", df.head())
+
+
+    def filter_data(self, year_start: int, year_end: int) -> pd.DataFrame:
+        filtered_df = self.df[self.df["Year"].between(year_start, year_end)]
+
+        setattr(self, "filtered_df", filtered_df)
+
+        print(f"Filtered data between {year_start} & {year_end}\n", filtered_df.head(15))
+
