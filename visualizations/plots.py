@@ -68,7 +68,16 @@ class Visuals:
     
     def bar_plot_visual(self, data: pd.DataFrame, column_name: str, filter_by: str, value_measure: str, fig_title: str, type_area="Länder")-> plt.figure:
         '''
-        
+        Provides a bar plot visualization from a refined dataframe.
+
+        Inputs: 
+        - data : Dataframe object
+        - column_name: x-axis column value
+        - filter_by: Focus of Social Beneift to filter the dataframe
+        - value_measure: Type of numerical feature to review in the visualization
+
+        Output: 
+        - Barplot plotly figure
         '''
         df_filter = data[data[column_name] == filter_by]
 
@@ -87,12 +96,20 @@ class Visuals:
         
         plt.legend(title=type_area, bbox_to_anchor=(1.05, 1), loc="upper left")
         
-        # plt.tight_layout()
-        
         return visual
 
-    def donut_visual(self, data: pd.DataFrame, grouping_type: str, col_name: str, title: str, in_percent=False):
-        
+    def donut_visual(self, data: pd.DataFrame, grouping_type: str, col_name: str, in_percent=False):
+        '''
+        Provides Donut Chart visualization.
+
+        Inputs:
+        - data: Dataframe object
+        - grouping_type: Column Name as string value to groupby
+        - col_name 
+
+        Output:
+        - Plotly Donut Chart
+        '''
         if in_percent:
             totals = data[grouping_type].sum()
             data = data.copy()
@@ -109,11 +126,23 @@ class Visuals:
             plot_bgcolor="rgba(0,0,0,0)",
             paper_bgcolor="rgba(0,0,0,0)"
         )
-        # do_chart.show()
+
         return do_chart
 
     def generate_heatmap(self, x: str, y: str, color_by: str, title: str, pivot_table: pd.DataFrame) -> go.Heatmap:
+        '''
+        Produce a heatmap visual from plotly.objects
 
+        Input:
+        - x: Values for the x-axis
+        - y: Vertical Scale values (y-axis)
+        - color_by: define the legend to color by
+        - title
+        - pivot_table: pivot table dataframe retrieved from the EDA
+
+        Output:
+        - Heatmap
+        '''
         visual = px.imshow(pivot_table, labels={"x": x, "y": y, "color": color_by}, title=title)
 
         visual.update_layout(
@@ -129,7 +158,19 @@ class Visuals:
 
 
     def grouped_bar_plot(self, data: pd.DataFrame, max_value: int, X: str, y: str, color_by: str, title: str, color_sequence: list[str], barmode="group") -> pd.DataFrame:
+        '''
+        Provides a coupled bar plot visualization of all Quarterly generations of data from the Security Benefits DataFrame
 
+        Inputs:
+        - data: pd.DataFrame
+        - max_value: y_axis range value
+        - X: DataFrame column for horizontal axis
+        - y: DataFrame column for vertical axis
+        - title
+        - color_by: legend to differentiate each data bar
+        - colorsequence: iterable to segregate each bar color
+        - barmode: "group" default
+        '''
         visual = px.bar(data, x=X, y=y, color=color_by, barmode=barmode, 
                         labels={y: y, X: X}, title=title,
                         color_discrete_sequence=color_sequence
@@ -150,7 +191,16 @@ class Visuals:
         return visual
 
     def line_progression_chart(self, data: pd.DataFrame, X: str, y: str, hue: str, title: str):
+        '''
+        A line plot for the Subsistence payments dataset
 
+        Inputs:
+        - data: pd.Dataframe object
+        - X: Horizontal axis column value
+        - y: Vertical axis column value
+        - hue: color by column specification
+        - title
+        '''
         visual = px.line(data, x=X, y=y, color=hue, title=title)
 
         visual.update_layout(
