@@ -9,9 +9,27 @@ import json
 
 
 class Visuals:
-    
-    def choropleth_figure(self, dataframe: pd.DataFrame, dimensions_url: str, locations: str ,color: str, labels: dict, title: str, range_color: tuple, color_continuous_scale="plasma", fig_templates="plotly_dark", fig_margins={"l":0, "r":0, "t":30, "b":0}):
+    '''
+    The class Visuals connects the Dataframe objects to convert them into visualizations for understanding feature relationships. The methods provided by the class provide bar, choropleths, heatmaps, donuts and line charts.
+    '''
+    def choropleth_figure(self, dataframe: pd.DataFrame, dimensions_url: str, locations: str ,color: str, labels: dict, title: str, range_color: tuple, color_continuous_scale="plasma", fig_templates="plotly_dark", fig_margins={"l":0, "r":0, "t":30, "b":0}) -> go.choropleth:
+        '''
+        Creates a plotly figure object -> choropleth image utilizing a json dimensions file and sizing parameters to segregate defined datapoints.
 
+        Inputs:
+        - dataframe: DataFrame object
+        - dimensions: link to .json file with geographical parameters and matrix values
+        - locations: String value to match JSON locations value
+        - color: hue factor to label each section of as per geographical parameters
+        - title: figure title
+        - range_color: range of values to establish scale of color scaling
+        - color_continuous_scale: similar to plotly parameter for color spectrum
+        - fig_template: plotly defined template for dark mode
+        - fig_margins: plotly figure margins
+
+        Output:
+        - Plotly Graph Objects figure: Chloropeth map figure
+        '''
         with urlopen(dimensions_url) as dimension:
             bundesland = json.load(dimension)
         
@@ -30,8 +48,18 @@ class Visuals:
 
         return choro
     
-    def sorted_df_visual(self, data: pd.DataFrame, sort_by: str, asc_order: bool):
-        
+    def sorted_df_visual(self, data: pd.DataFrame, sort_by: str, asc_order: bool) -> pd.DataFrame:
+        '''
+        Produces a sorted dataframe defined by the sort_by parameter and returns the sorted Dataframe for a table visual
+
+        Inputs:
+        - data: the input pd.DataFrame
+        - sort_by: Column to sort by
+        - asc_order: Boolean to ascertain the sorting in either acending and descending order
+
+        Output:
+        - Sorted DataFrame object
+        '''
         sorted_df = data.sort_values(by=sort_by, ascending=asc_order)
 
         print(sorted_df.head(10))
@@ -39,7 +67,9 @@ class Visuals:
         return sorted_df
     
     def bar_plot_visual(self, data: pd.DataFrame, column_name: str, filter_by: str, value_measure: str, fig_title: str, type_area="Länder")-> plt.figure:
-
+        '''
+        
+        '''
         df_filter = data[data[column_name] == filter_by]
 
         visual = plt.figure(figsize=(8, 6))
@@ -135,6 +165,3 @@ class Visuals:
             hovermode="closest"
         )
         return visual
-
-
-
