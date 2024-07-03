@@ -34,13 +34,23 @@ class Dataset:
         - func: The callback function to be used in the wrapper function
         '''
         def wrapping_function(self, *args, **kwargs):
-            with open(self.path_to_file, "rb") as data_file:
-                output = chardet.detect(data_file.read())
-                encoding = output["encoding"]
-                print(f"\nCSV file encoding: {encoding}")
-
-            
-            return func(self, encoding, *args, *kwargs)
+            try:
+                with open(self.path_to_file, "rb") as data_file:
+                    output = chardet.detect(data_file.read())
+                    encoding = output["encoding"]
+                    print(f"\nCSV file encoding: {encoding}")
+            except FileNotFoundError as FE:
+                print("File {0} was not found, check relative path".format(self.file_to_path))
+                return
+            except EncodingWarning:
+                print("Encoding was not clearly identified")
+                return
+            finally:
+                if encoding:
+                    return func(self, encoding, *args, *kwargs)
+                else:
+                    print("Encoding was not identified from file")
+                    return None
         return wrapping_function
 
 
@@ -54,15 +64,19 @@ class Dataset:
         Output:
         - pd.DataFrame: Original dataframe with type converted columns
         '''
-        for col in args:
-            self.df[col] = pd.to_numeric(self.df[col], errors="coerce")
+        try:
+            for col in args:
+                self.df[col] = pd.to_numeric(self.df[col], errors="coerce")
 
-        self.df = self.df.fillna(0)
+            self.df = self.df.fillna(0)
 
-        print(self.df[list(args)].head(10))
+            print(self.df[list(args)].head(10))
+        except KeyError:
+            print("Column value does not correspond to a column in the dataframe")
+            return
 
         return self.df
-    
+
     def filter_data(self, region_col="Länder"):
         '''
         Use case for row values containing "Total" and filters them out of the dataframe object
@@ -70,15 +84,16 @@ class Dataset:
         Inputs:
         - region_col: Default set to 'Länder'
         '''
-        self.df = self.df[~self.df.apply(lambda r: r.astype(str).str.contains("Total").any(), axis=1)]
+        try:
+            self.df = self.df[~self.df.apply(lambda r: r.astype(str).str.contains("Total").any(), axis=1)]
 
-        self.df.reset_index(drop=False, inplace=True)
+            self.df.reset_index(drop=False, inplace=True)
 
-        self.df[region_col] = self.df["Länder"].astype(str)
-
-        print(self.df.head(10))
-
-        return
+            self.df[region_col] = self.df["Länder"].astype(str)
+        except KeyError as KE:
+            print("Column value does not correspond to a column in the dataframe thus filter was not completed")
+        finally:
+            return self.df
 
     def data_group(self, cols: list[str], group_element: str, include_total=False) -> pd.DataFrame:
         '''
@@ -93,18 +108,20 @@ class Dataset:
         - Groupby Data Frame object
         '''
         var_name = f"{group_element}_df"
+        try:
+            grouped_data = self.df.groupby(group_element)[cols].sum().reset_index()
 
-        grouped_data = self.df.groupby(group_element)[cols].sum().reset_index()
+            if include_total:
+                grouped_data["Total"] = grouped_data[cols].sum(axis=1)
 
-        if include_total:
-            grouped_data["Total"] = grouped_data[cols].sum(axis=1)
+            setattr(self, var_name, grouped_data)
+            print(f"\nGrouped DataFrame with sums: \n{grouped_data.head()}")
 
-        setattr(self, var_name, grouped_data)
-
-        print(f"\nGrouped DataFrame with sums: \n{grouped_data.head()}")
-
-        return grouped_data
-    
+            return grouped_data
+        except KeyError:
+            print(f"column argument {group_element} entered is not part of DataFrame {self.df.columns}")
+        finally:
+            print("Grouped Function process completed")
 
 
 class PublicAssistance(Dataset):
@@ -123,24 +140,25 @@ class PublicAssistance(Dataset):
         '''
         Utilises the decorator function defined in the Dataset Class to identify file encoding and reads the contents of the files prior to conversion to a dataframe object.
         '''
-        with open(self.path_to_file, "r", encoding=encoding) as data_file:
-            file_contents = data_file.read()
-            print("\n", file_contents[:500])
+        try:
+            with open(self.path_to_file, "r", encoding=encoding) as data_file:
+                file_contents = data_file.read()
+                print("\n", file_contents[:500])
 
+            df = pd.read_csv(self.path_to_file, encoding=encoding, delimiter=self.delimiter, skiprows=self.skiprows, engine="python")
+            df.columns = columns
 
-        df = pd.read_csv(self.path_to_file, encoding=encoding, delimiter=self.delimiter, skiprows=self.skiprows, engine="python")
-        df.columns = columns
+            print("\n", df.head(10))
 
-        print("\n", df.head(10))
-
-        self.df = df
-
+            self.df = df
+        except FileNotFoundError:
+            print("{0} File not detected, update the url argument provided".format(self.path_to_file))
+            return
     
 class BasicSecurity(Dataset):
     '''
     The child class inheriting from the Dataset class, focusing on the primary dataset public_assistance.
     '''
-
     def __init__(self, path_to_file, delimiter, skiprows, skipfooter):
         '''
         Instantiates the BasicSecurity class object with the same parameters as defined in the Dataset class with no additions
@@ -154,22 +172,26 @@ class BasicSecurity(Dataset):
 
         Additionally, The function reduces the dataframe size by selecting the critical dataframe columns and assigns the dataframe object to the object property.
         '''
-        with open(self.path_to_file, "r", encoding=encoding) as data_file:
-            file_contents = data_file.read()
-            print("\n", file_contents[:500])
+        try:
+            with open(self.path_to_file, "r", encoding=encoding) as data_file:
+                file_contents = data_file.read()
+                print("\n", file_contents[:500])
 
 
-        df = pd.read_csv(self.path_to_file, encoding=encoding, delimiter=self.delimiter, skiprows=self.skiprows, skipfooter=self.skipfooter, engine="python")
+            df = pd.read_csv(self.path_to_file, encoding=encoding, delimiter=self.delimiter, skiprows=self.skiprows, skipfooter=self.skipfooter, engine="python")
 
-        df = df.drop(0).reset_index(drop=True)
+            df = df.drop(0).reset_index(drop=True)
 
-        df = df.iloc[:, [0 , 1, 30, 31, 32, 33]]
+            df = df.iloc[:, [0 , 1, 30, 31, 32, 33]]
 
-        df.columns = columns
+            df.columns = columns
 
-        print("\n", df.head(10))
+            print("\n", df.head(10))
 
-        self.df = df
+            self.df = df
+        except FileNotFoundError:
+            print("{0} File not detected, update the url argument provided".format(self.path_to_file))
+            return
 
     def modify_for_pivot(func) -> pd.DataFrame:
         '''
