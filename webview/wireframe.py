@@ -3,15 +3,30 @@ import altair
 from visualizations import public_assist, pa, bsc, basics, melted_df, max_quarterly_value, sub_benefits, subsistence
 
 class WebApp:
-
+    '''
+    The WebApp class connects the EDA conversion process with the visualizations to display onto the main streamlit application. The Class houses the methods to instantiate the streamlit web object window and calls upon all supplementary methods as its instantiated to create the sidebar, containers and visualizations within them.
+    '''
     def __init__(self, title="Social Benefits Revenue & Expenditures", icon="🇩🇪"):
+        '''
+        The instantiation of the WebApp class produces the streamlit object and calls upon the container and setup configuration methods of streamlit. It uses the EDA.py and Plot.py imports and its subsequent objects to create the web interface.
+
+        Inputs:
+        - Title: Title of the Tab window and side bar object
+        - Icon: The Icon represented on the sidebar and tab header
+
+        Output:
+        - streamlit web application object
+        '''
         self.title = title
         self.icon = icon
         self.col: str = "PublicAssistance"
         self.filter_by_benefit: iter = pa.df[self.col].unique()
         self.values = ["Expenditure(TEUR)", "Revenue(TEUR)", "NetExpenditure(TEUR)"]
 
+        # Altair visualization sets the backgroun theme to darkmode
         altair.themes.enable("dark")
+
+        # Method calls upon instantiation to load the visualizations directly as the program loads up, all parameters are defined within each function definition with their respective datasets
         self.page_configuration()
         self.develop_sidebar()
         self.establish_top_wireframe()
@@ -20,6 +35,9 @@ class WebApp:
         self.thirdataset(data=sub_benefits.filtered_df)
 
     def page_configuration(self, theme="dark"):
+        '''
+        Utilizes streamlits .set_page_config() method to define the overall web object parameters and web page settings.
+        '''
         streamlit.set_page_config(
             page_title=self.title,
             page_icon=self.icon,
@@ -31,6 +49,9 @@ class WebApp:
         return
     
     def develop_sidebar(self):
+        '''
+        Creation of the sidebar object to allow user interaction with the dataset. Select options provide functionality into manipulating the data visualizations for a smoother experience.
+        '''
         with streamlit.sidebar:
 
             streamlit.title(f"{self.icon} {self.title}")
@@ -48,7 +69,9 @@ class WebApp:
             streamlit.markdown("***")
 
     def establish_top_wireframe(self):
-        
+        '''
+        Creates the user first view container. The first container embodies the choropleth figure from the PublicAssistance Dataset, combined with the topic header and explanations.
+        '''
         with streamlit.container():
             streamlit.header("Social Benefits: Subsistence and Basic Necessity Benefits", divider="rainbow")
 
@@ -68,7 +91,9 @@ class WebApp:
             streamlit.plotly_chart(deutschland_map, use_container_width=True)
 
     def middle_wireframe(self):
-        
+        '''
+        The dataset is segregated within the function call to establish a second entity within the streamlit application. Housing the visualizations from the relationships within the first dataset. Outlines the barplot visualizations, table view and donut chart.
+        '''
         with streamlit.container():
             
             barplot_visual = public_assist.bar_plot_visual(
@@ -117,7 +142,9 @@ class WebApp:
                 streamlit.plotly_chart(do_visual)
 
     def second_dataset(self):
-        
+        '''
+        Encompasses the second dataset within a separate section of streamlit and provides the visualizations to seek the relationship and data analysis of the Basic Security Benefits.
+        '''
         with streamlit.container():
             streamlit.subheader("Social Benefits: Basic Security Benefits", divider="violet")
 
@@ -140,7 +167,9 @@ class WebApp:
 
 
     def thirdataset(self, data: object):
-        
+        '''
+        Focusing the Subsistence Payment section of the relationships in social benefits. The Subsistence Payments relationship over time.
+        '''
         with streamlit.container():
             streamlit.subheader("Social Benefits: Subsistence Payment Recipients", divider="blue")
             
