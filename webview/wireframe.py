@@ -102,7 +102,7 @@ class WebApp:
                     filter_by=self.filter_by, 
                     fig_title=f"{self.value_measure} by {self.filter_by}", value_measure=self.value_measure)
             
-            streamlit.pyplot(barplot_visual)
+            streamlit.plotly_chart(barplot_visual)
 
             col1, col2 = streamlit.columns(2, gap="small")
 
@@ -137,7 +137,7 @@ class WebApp:
                 )
 
             with col2:
-                do_visual = public_assist.donut_visual(data=pa.PublicAssistance_df, grouping_type=self.value_measure, col_name=self.col, title=f"{self.filter_by} by Social Benefit (% of Total)", in_percent=True)
+                do_visual = public_assist.donut_visual(data=pa.PublicAssistance_df, grouping_type=self.value_measure, col_name=self.col, in_percent=True)
 
                 streamlit.plotly_chart(do_visual)
 
@@ -151,7 +151,7 @@ class WebApp:
             col1, col2 = streamlit.columns(2, gap="medium")
 
             with col1:
-                do_chart = basics.donut_visual(data=bsc.Gender_df, grouping_type="Total", col_name="Gender", title="Total Basic Security Benefits Recipients by Gender")
+                do_chart = basics.donut_visual(data=bsc.Gender_df, grouping_type="Total", col_name="Gender")
 
                 streamlit.plotly_chart(do_chart)
             

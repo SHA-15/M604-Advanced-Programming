@@ -232,14 +232,16 @@ class BasicSecurity(Dataset):
         Output:
         - Pivot Table in a Pandas Dataframe object
         '''
-        pivot_table = grouped_data.pivot_table(values=values, index=index, columns=column_header)
+        try:
+            pivot_table = grouped_data.pivot_table(values=values, index=index, columns=column_header)
         
-        setattr(self, "pivot_table", pivot_table)
+            setattr(self, "pivot_table", pivot_table)
 
-        print(pivot_table.head(20))
+            print(pivot_table.head(10))
 
-        return pivot_table
-    
+            return pivot_table
+        except KeyError:
+                print(f"column argument {column_header}  & {values} entered is not part of DataFrame {grouped_data}", "Calling Function with baseline Dataset parameters")
 
     def max_quarterly_assessment(self, data: pd.DataFrame, cols: list[str], var_assignment: str, value_name: str) -> pd.DataFrame:
         '''
@@ -254,13 +256,17 @@ class BasicSecurity(Dataset):
         - The Melted dataframe object
         - Maximum value from quarter columns
         '''
-        quarter_view = data[cols]
+        try:
+            quarter_view = data[cols]
 
-        max_value = quarter_view[cols[1:]].max().max()
+            max_value = quarter_view[cols[1:]].max().max()
 
-        elongate_df = pd.melt(quarter_view, id_vars=[cols[0]], var_name=var_assignment, value_name=value_name)
+            elongate_df = pd.melt(quarter_view, id_vars=[cols[0]], var_name=var_assignment, value_name=value_name)
 
-        return elongate_df, max_value
+            return elongate_df, max_value
+        except KeyError:
+            print(f"{cols} are not found inside the Dataframe selection")
+
 
 
 class Subsistence(Dataset):

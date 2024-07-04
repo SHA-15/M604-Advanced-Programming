@@ -81,22 +81,29 @@ class Visuals:
         '''
         df_filter = data[data[column_name] == filter_by]
 
-        visual = plt.figure(figsize=(8, 6))
-        plt.style.use('dark_background')
+        visual = px.bar(
+            data_frame=df_filter,
+            x=column_name,
+            y=value_measure,
+            title=fig_title,
+            color=type_area,
+            labels={
+                column_name:column_name,
+                value_measure:filter_by
+            },
+            barmode="group",
+        )
 
-        sns.barplot(data=df_filter, x=column_name, y=value_measure, hue=type_area, dodge=True)
-        
-        plt.title(fig_title)
-        
-        plt.xlabel(column_name)
-        plt.ylabel(filter_by)
-        
-        plt.xticks(rotation=0, ha="right", color="white")
-        plt.yticks(color="white")
-        
-        plt.legend(title=type_area, bbox_to_anchor=(1.05, 1), loc="upper left")
-        
+        visual.update_layout(
+            plot_bgcolor="rgba(0,0,0,0)",
+            paper_bgcolor="rgba(0,0,0,0)",
+            margin={"l":0, "r":0, "t":40, "b":10},
+            height=800,
+            hovermode="closest"
+        )
+
         return visual
+
 
     def donut_visual(self, data: pd.DataFrame, grouping_type: str, col_name: str, in_percent=False):
         '''
@@ -121,7 +128,6 @@ class Visuals:
         do_chart.update_layout(
             margin=dict(l=0, r=0, t=50, b=10),
             height=350,
-            template="plotly_dark",
             hovermode="closest",
             plot_bgcolor="rgba(0,0,0,0)",
             paper_bgcolor="rgba(0,0,0,0)"
@@ -150,7 +156,6 @@ class Visuals:
             paper_bgcolor="rgba(0,0,0,0)",
             margin={"l":0, "r":0, "t": 40, "b":10},
             height=300,
-            template="plotly_dark",
             hovermode="closest"
         )
         # visual.show()
@@ -183,7 +188,6 @@ class Visuals:
             paper_bgcolor="rgba(0,0,0,0)",
             margin={"l":0, "r":0, "t":40, "b":10},
             height=800,
-            template="plotly_dark",
             hovermode="closest"
         )
 
@@ -211,7 +215,6 @@ class Visuals:
             paper_bgcolor="rgba(0,0,0,0)",
             margin={"l":0, "r":0, "t":40, "b":10},
             height=800,
-            template="plotly_dark",
             hovermode="closest"
         )
         return visual
