@@ -43,5 +43,5 @@ streamlit run main.py
 ## UNIT TESTING
 To perform unit tests on the program found in `unittests` directory enter the following command:
 ```bash
-python -m unittests discover -s unittest -p "my_test_*.py" -v
+python -m unittest discover -s unittests -p "my_test_*.py" -v
 ```
