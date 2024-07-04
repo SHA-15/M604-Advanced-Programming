@@ -148,13 +148,23 @@ class PublicAssistance(Dataset):
             df = pd.read_csv(self.path_to_file, encoding=encoding, delimiter=self.delimiter, skiprows=self.skiprows, engine="python")
             df.columns = columns
 
-            print("\n", df.head(10))
+            #print("\n", df.head(10))
 
+            replaced_substring_1 = "ttemberg"
+            replaced_substring_2 = "ingen"
+            change_mechanism_1 = df["Länder"].str.endswith(replaced_substring_1)
+            change_mechanism_2 = df["Länder"].str.endswith(replaced_substring_2)
+
+            df.loc[change_mechanism_1, "Länder"] = "Baden-Württemberg"
+            df.loc[change_mechanism_2, "Länder"] = "Thüringen"
             self.df = df
+
+            return
         except FileNotFoundError:
             print("{0} File not detected, update the url argument provided".format(self.path_to_file))
             return
     
+
 class BasicSecurity(Dataset):
     '''
     The child class inheriting from the Dataset class, focusing on the primary dataset public_assistance.
@@ -186,7 +196,13 @@ class BasicSecurity(Dataset):
 
             df.columns = columns
 
-            print("\n", df.head(10))
+            replaced_substring_1 = "ttemberg"
+            replaced_substring_2 = "ingen"
+            change_mechanism_1 = df["Länder"].str.endswith(replaced_substring_1)
+            change_mechanism_2 = df["Länder"].str.endswith(replaced_substring_2)
+
+            df.loc[change_mechanism_1, "Länder"] = "Baden-Württemberg"
+            df.loc[change_mechanism_2, "Länder"] = "Thüringen"
 
             self.df = df
         except FileNotFoundError:
@@ -237,7 +253,7 @@ class BasicSecurity(Dataset):
         
             setattr(self, "pivot_table", pivot_table)
 
-            print(pivot_table.head(10))
+            #print(pivot_table.head(10))
 
             return pivot_table
         except KeyError:
@@ -328,9 +344,17 @@ class Subsistence(Dataset):
         df = df.iloc[1:]
 
         df.Year = df["Year"].str[:4]
+        
+        replaced_substring_1 = "ttemberg"
+        replaced_substring_2 = "ingen"
+        change_mechanism_1 = df["Länder"].str.endswith(replaced_substring_1)
+        change_mechanism_2 = df["Länder"].str.endswith(replaced_substring_2)
+
+        df.loc[change_mechanism_1, "Länder"] = "Baden-Württemberg"
+        df.loc[change_mechanism_2, "Länder"] = "Thüringen"
 
         self.df = df
-        print("This is revised dataframe of the subsistence recipients\n", df.head())
+        #print("This is revised dataframe of the subsistence recipients\n", df.head())
 
 
     def filter_data(self, year_start: int, year_end: int) -> pd.DataFrame:
@@ -345,6 +369,6 @@ class Subsistence(Dataset):
 
         setattr(self, "filtered_df", filtered_df)
 
-        print(f"Filtered data between {year_start} & {year_end}\n", filtered_df.head(15))
+        #print(f"Filtered data between {year_start} & {year_end}\n", filtered_df.head(15))
 
 

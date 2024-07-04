@@ -12,7 +12,7 @@ class Visuals:
     '''
     The class Visuals connects the Dataframe objects to convert them into visualizations for understanding feature relationships. The methods provided by the class provide bar, choropleths, heatmaps, donuts and line charts.
     '''
-    def choropleth_figure(self, dataframe: pd.DataFrame, dimensions_url: str, locations: str ,color: str, labels: dict, title: str, range_color: tuple, color_continuous_scale="plasma", fig_templates="plotly_dark", fig_margins={"l":0, "r":0, "t":30, "b":0}) -> go.choropleth:
+    def choropleth_figure(self, dataframe: pd.DataFrame, dimensions_url: str, locations: str ,color: str, labels: dict, title: str, range_color: tuple, color_continuous_scale="plasma") -> go.choropleth:
         '''
         Creates a plotly figure object -> choropleth image utilizing a json dimensions file and sizing parameters to segregate defined datapoints.
 
@@ -41,9 +41,12 @@ class Visuals:
         choro.update_geos(fitbounds="locations", visible=False)
 
         choro.update_layout(
-        template=fig_templates,
-        margin=fig_margins,
-        height=500
+        template="plotly_dark",
+        plot_bgcolor="rgba(0,0,0,0)",
+        paper_bgcolor="rgba(0,0,0,0)",
+        margin={"l":0, "r":0, "t":30, "b":0},
+        height=500,
+        hovermode="closest"
         )
 
         return choro
@@ -66,7 +69,7 @@ class Visuals:
 
         return sorted_df
     
-    def bar_plot_visual(self, data: pd.DataFrame, column_name: str, filter_by: str, value_measure: str, fig_title: str, type_area="Länder")-> plt.figure:
+    def bar_plot_visual(self, data: pd.DataFrame, column_name: str, filter_by: str, value_measure: str, fig_title: str, type_area="Länder", chosen_states=None)-> plt.figure:
         '''
         Provides a bar plot visualization from a refined dataframe.
 
@@ -75,11 +78,14 @@ class Visuals:
         - column_name: x-axis column value
         - filter_by: Focus of Social Beneift to filter the dataframe
         - value_measure: Type of numerical feature to review in the visualization
+        - chosen_states (list): filtering component for regions
 
         Output: 
         - Barplot plotly figure
         '''
         df_filter = data[data[column_name] == filter_by]
+        if chosen_states:
+            df_filter= df_filter[df_filter[type_area].isin(chosen_states)]
 
         visual = px.bar(
             data_frame=df_filter,

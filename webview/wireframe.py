@@ -60,7 +60,7 @@ class WebApp:
             self.value_measure: iter = streamlit.selectbox("Filter by Exp, Rev, NetExp", self.values)
 
 
-            self.region: str = streamlit.multiselect("Select Bundesland", sub_benefits.filtered_df["Länder"].unique(), default=sub_benefits.filtered_df["Länder"].unique())
+            self.region: str = streamlit.multiselect("Select Bundesland", pa.Länder_df["Länder"].unique(), default=pa.Länder_df["Länder"].unique())
 
             streamlit.markdown("***")
             streamlit.markdown("This project is part of the M605A Advanced Programming Module in GISMA University of Applied Sciences")
@@ -79,13 +79,17 @@ class WebApp:
 
             streamlit.markdown("Deutschland's tax contribution bracket is coupled with social benefit payments - supported by the Sozialamt. This dashboard highlights the overall expenditures within this sector and looks into two specific areas: Basic Security benefits & Subsistence Payments.")
 
+            map_region_filter = pa.Länder_df[pa.Länder_df["Länder"].isin(self.region)] 
+
+
+
             deutschland_map = public_assist.choropleth_figure(
-                                dataframe=pa.Länder_df,
+                                dataframe=map_region_filter,
                                 dimensions_url="https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/main/2_bundeslaender/1_sehr_hoch.geo.json", 
                                 locations="Länder", 
-                                color="NetExpenditure(TEUR)", 
-                                labels={"NetExpenditure(TEUR)": "Net Expenditure in Thousand Euros"}, 
-                                title="Net Expenditure By State in Deutschland", 
+                                color=self.value_measure, 
+                                labels={self.value_measure: f"{self.value_measure[:-5]}in Thousand Euros"}, 
+                                title=f"{self.value_measure} By State in Deutschland", 
                                 range_color=(0, pa.Länder_df["NetExpenditure(TEUR)"].max())
                                 )
             streamlit.plotly_chart(deutschland_map, use_container_width=True)
@@ -100,7 +104,9 @@ class WebApp:
                     data=pa.df, 
                     column_name=self.col, 
                     filter_by=self.filter_by, 
-                    fig_title=f"{self.value_measure} by {self.filter_by}", value_measure=self.value_measure)
+                    fig_title=f"{self.value_measure} by {self.filter_by}", 
+                    value_measure=self.value_measure,
+                    chosen_states=self.region)
             
             streamlit.plotly_chart(barplot_visual)
 
