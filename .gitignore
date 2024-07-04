@@ -13,3 +13,7 @@ venv/
 
 # Ignore .ipynb file
 Final-Project.ipynb 
+
+# Ignore DS files
+.DS_Store
+data/.DS_Store
