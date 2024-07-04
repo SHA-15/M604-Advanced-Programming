@@ -10,3 +10,6 @@ test.py
 
 # Ignore venv directory
 venv/
+
+# Ignore .ipynb file
+Final-Project.ipynb 
