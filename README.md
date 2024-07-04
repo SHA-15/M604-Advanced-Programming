@@ -7,6 +7,11 @@ Social Benefits are critical component of Germany’s welfare system portfolio. 
 ### 🌍 GENESIS - Online Datenbank
 The Genesis-online datenbank is the public repository for reports of public sector performance across all spheres. however as all data is defined within table views, it does not provide a more accurate representation of the process. Therefore, a web-based GUI was developed using the [STREAMLIT](https://streamlit.io/) library.
 
+### 🚀 [HEAD DIRECTLY THERE!](https://social-benefits.streamlit.app/)
+
+##### Or follow the link:
+https://social-benefits.streamlit.app/
+
 ### Application Instructions
 
 ##### Python Version
