@@ -1,0 +1,9 @@
+# Ignore Python bytecode cache directories
+__pycache__/
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore Defined Python Files
+tempCodeRunnerFile.py 
+test.py
