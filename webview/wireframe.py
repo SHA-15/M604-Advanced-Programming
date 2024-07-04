@@ -85,7 +85,7 @@ class WebApp:
 
             deutschland_map = public_assist.choropleth_figure(
                                 dataframe=map_region_filter,
-                                dimensions_url="https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/main/2_bundeslaender/1_sehr_hoch.geo.json", 
+                                dimensions_url="1_sehr_hoch.geo.json", 
                                 locations="Länder", 
                                 color=self.value_measure, 
                                 labels={self.value_measure: f"{self.value_measure[:-5]}in Thousand Euros"}, 

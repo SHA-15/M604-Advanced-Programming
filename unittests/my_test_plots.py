@@ -26,7 +26,7 @@ class TestVisuals(unittest.TestCase):
         """
         choro = self.visuals.choropleth_figure(
             dataframe=self.sample_df,
-            dimensions_url="https://raw.githubusercontent.com/isellsoap/deutschlandGeoJSON/main/2_bundeslaender/1_sehr_hoch.geo.json",
+            dimensions_url="1_sehr_hoch.geo.json",
             locations="Länder",
             color="NetExpenditure(TEUR)",
             labels={"NetExpenditure(TEUR)": "NetExpenditure in Thousand Euros"},
@@ -54,7 +54,7 @@ class TestVisuals(unittest.TestCase):
             value_measure="NetExpenditure(TEUR)",
             fig_title="Net Expenditure in Berlin"            
         )
-        self.assertIsInstance(bar_plot, plt.Figure)
+        self.assertIsInstance(bar_plot, go.Figure)
         
     def test_donut_visual(self):
         """
@@ -63,8 +63,7 @@ class TestVisuals(unittest.TestCase):
         donut_chart = self.visuals.donut_visual(
             data=self.sample_df,
             grouping_type="NetExpenditure(TEUR)",
-            col_name="Länder",
-            title="Net Expenditure Distribution"
+            col_name="Länder"
         )
         self.assertIsInstance(donut_chart, go.Figure)
         

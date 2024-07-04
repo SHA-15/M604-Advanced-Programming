@@ -2,8 +2,6 @@ from urllib.request import urlopen
 from matplotlib import pyplot as plt
 import plotly.express as px
 import plotly.graph_objects as go
-import plotly.io as pio
-import seaborn as sns
 import pandas as pd
 import json
 
@@ -30,7 +28,7 @@ class Visuals:
         Output:
         - Plotly Graph Objects figure: Chloropeth map figure
         '''
-        with urlopen(dimensions_url) as dimension:
+        with open(dimensions_url) as dimension:
             bundesland = json.load(dimension)
         
         choro = px.choropleth(dataframe, geojson=bundesland, locations=locations, featureidkey="properties.name",
@@ -41,11 +39,11 @@ class Visuals:
         choro.update_geos(fitbounds="locations", visible=False)
 
         choro.update_layout(
-        template="plotly_dark",
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
+        geo_bgcolor="rgba(0,0,0,0)",
         margin={"l":0, "r":0, "t":30, "b":0},
-        height=500,
+        height=350,
         hovermode="closest"
         )
 
